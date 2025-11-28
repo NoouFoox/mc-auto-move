@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "automove",
+  "version": "${version}",
+  "name": "AutoMove",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/automove/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "modmenu": [
+      "fun.cyclesn.automove.client.ModMenuApiImpl"
+    ],
+    "fabric-datagen": [
+      "fun.cyclesn.automove.client.AutomoveDataGenerator"
+    ],
+    "client": [
+      "fun.cyclesn.automove.client.AutomoveClient"
+    ],
+    "main": [
+      "fun.cyclesn.automove.Automove"
+    ]
+  },
+  "mixins": [
+    "automove.mixins.json",
+    {
+      "config": "automove.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
