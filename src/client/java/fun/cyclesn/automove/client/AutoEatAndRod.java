@@ -14,7 +14,7 @@ public class AutoEatAndRod {
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
-            if (!AutoMoveConfig.INSTANCE.fishEnabled) return;
+            if (!AutoMoveConfig.INSTANCE.autoEat) return;
             // 跟随 自动挂机状态
             if (!AutoMoveConfig.INSTANCE.enabled) {
                 client.options.useKey.setPressed(false);
@@ -54,6 +54,7 @@ public class AutoEatAndRod {
 
     //    吃完食钓鱼
     private static void switchBackToRod(MinecraftClient client) {
+        if (!AutoMoveConfig.INSTANCE.fishEnabled) return;
         if (client.player == null) return;
         PlayerInventory inv = client.player.getInventory();
 

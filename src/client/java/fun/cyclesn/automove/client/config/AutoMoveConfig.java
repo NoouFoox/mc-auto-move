@@ -13,6 +13,8 @@ public class AutoMoveConfig {
 
     public boolean enabled = false;
     public boolean fishEnabled = true;
+    public boolean jumpEnabled = false;
+    public boolean autoEat = false ;
 
     private AutoMoveConfig() {
     }

@@ -4,6 +4,8 @@ import fun.cyclesn.automove.client.config.AutoMoveConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 
+import java.util.Objects;
+
 public class AutomoveClient implements ClientModInitializer {
     private int tick = 0;
     private boolean movingLeft = false;
@@ -24,6 +26,9 @@ public class AutomoveClient implements ClientModInitializer {
                 if (tick % 100 == 0) {
                     movingLeft = true;
                     client.options.leftKey.setPressed(true);
+                    if (client.player != null && AutoMoveConfig.INSTANCE.jumpEnabled) {
+                        client.player.jump();
+                    }
                 }
 
                 if (movingLeft && tick % 100 == 10) {
