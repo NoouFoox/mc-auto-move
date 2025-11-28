@@ -26,7 +26,7 @@ public class AutomoveClient implements ClientModInitializer {
                     client.options.leftKey.setPressed(true);
                 }
 
-                if (movingLeft && tick % 100 == 5) {
+                if (movingLeft && tick % 100 == 10) {
                     client.options.leftKey.setPressed(false);
                     movingLeft = false;
 
@@ -34,7 +34,7 @@ public class AutomoveClient implements ClientModInitializer {
                     client.options.rightKey.setPressed(true);
                 }
 
-                if (movingRight && tick % 100 == 10) {
+                if (movingRight && tick % 100 == 20) {
                     client.options.rightKey.setPressed(false);
                     movingRight = false;
                 }

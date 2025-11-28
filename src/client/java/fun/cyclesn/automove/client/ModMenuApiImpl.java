@@ -27,13 +27,23 @@ public class ModMenuApiImpl implements ModMenuApi {
         protected void init() {
             this.addDrawableChild(
                     ButtonWidget.builder(
-                            Text.literal("自动挂机" + (AutoMoveConfig.INSTANCE.enabled ? "开启" : "关闭")),
+                            Text.literal("自动挂机:" + (AutoMoveConfig.INSTANCE.enabled ? "开启" : "关闭")),
                             btn -> {
                                 AutoMoveConfig.INSTANCE.enabled = !AutoMoveConfig.INSTANCE.enabled;
                                 AutoMoveConfig.INSTANCE.save();
-                                btn.setMessage(Text.literal("自动挂机" + (AutoMoveConfig.INSTANCE.enabled ? "开启" : "关闭")));
+                                btn.setMessage(Text.literal("自动挂机:" + (AutoMoveConfig.INSTANCE.enabled ? "开启" : "关闭")));
                             }
-                    ).dimensions(this.width / 2 - 100, this.height / 2 - 20, 200, 20).build()
+                    ).dimensions(this.width / 2 - 100, this.height / 2 - 30, 200, 20).build()
+            );
+            this.addDrawableChild(
+                    ButtonWidget.builder(
+                            Text.literal("切换鱼竿功能:" + (AutoMoveConfig.INSTANCE.fishEnabled ? "开启" : "关闭")),
+                            btn -> {
+                                AutoMoveConfig.INSTANCE.fishEnabled = !AutoMoveConfig.INSTANCE.fishEnabled;
+                                AutoMoveConfig.INSTANCE.save();
+                                btn.setMessage(Text.literal("切换鱼竿功能:" + (AutoMoveConfig.INSTANCE.fishEnabled ? "开启" : "关闭")));
+                            }
+                    ).dimensions(this.width / 2 - 100, this.height / 2 - 60, 200, 20).build()
             );
             this.addDrawableChild(
                     ButtonWidget.builder(Text.literal("返回"), (button) -> {

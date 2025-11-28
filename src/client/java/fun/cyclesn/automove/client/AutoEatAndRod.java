@@ -14,6 +14,7 @@ public class AutoEatAndRod {
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
+            if (!AutoMoveConfig.INSTANCE.fishEnabled) return;
             // 跟随 自动挂机状态
             if (!AutoMoveConfig.INSTANCE.enabled) {
                 client.options.useKey.setPressed(false);
@@ -36,6 +37,7 @@ public class AutoEatAndRod {
             client.options.useKey.setPressed(true);
         }
     }
+
     //    吃没吃完食
     private static void checkEatFinish(MinecraftClient client) {
         var player = client.player;
@@ -49,6 +51,7 @@ public class AutoEatAndRod {
 
         wasUsingItem = isUsing;
     }
+
     //    吃完食钓鱼
     private static void switchBackToRod(MinecraftClient client) {
         if (client.player == null) return;
@@ -65,6 +68,7 @@ public class AutoEatAndRod {
         // 停止“右键”
         client.options.useKey.setPressed(false);
     }
+
     //    找食在哪
     private static int findFoodInHotbar(PlayerInventory inv) {
         for (int i = 0; i < 9; i++) {
@@ -73,6 +77,7 @@ public class AutoEatAndRod {
         }
         return -1;
     }
+
     //    看看是不是食
     public static boolean isFood(ItemStack stack) {
         if (stack == null || stack.isEmpty()) return false;
