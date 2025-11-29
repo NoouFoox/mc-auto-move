@@ -12,7 +12,6 @@ public class AutoMoveConfig {
     private static final File FILE = new File("config/automove.json");
 
     public boolean enabled = false;
-    public boolean fishEnabled = true;
     public boolean jumpEnabled = false;
     public boolean autoEat = false ;
     public boolean autoSword = false;

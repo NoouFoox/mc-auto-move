@@ -3,26 +3,24 @@ package fun.cyclesn.automove.client;
 import fun.cyclesn.automove.client.config.AutoMoveConfig;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.ItemStack;
 
 public class AutoEatAndRod {
     public static boolean wasUsingItem = false;
+    private static int previousSlot = -1;
 
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
-            if (!AutoMoveConfig.INSTANCE.autoEat) return;
-            // 跟随 自动挂机状态
-            if (!AutoMoveConfig.INSTANCE.enabled) {
-                client.options.useKey.setPressed(false);
+            if (!AutoMoveConfig.INSTANCE.autoEat) {
+//                client.options.useKey.setPressed(false);
                 wasUsingItem = false;
-                return;
+                previousSlot = -1;
+            } else {
+                autoEat(client);
+                checkEatFinish(client);
             }
-            autoEat(client);
-            checkEatFinish(client);
         });
     }
 
@@ -33,6 +31,10 @@ public class AutoEatAndRod {
         if (player.getHungerManager().getFoodLevel() >= 18) return;
         var food = findFoodInHotbar(player.getInventory());
         if (food != -1) {
+            int preSlot = player.getInventory().getSelectedSlot();
+            if (food != preSlot) {
+                previousSlot = player.getInventory().getSelectedSlot();
+            }
             player.getInventory().setSelectedSlot(food);
             client.options.useKey.setPressed(true);
         }
@@ -54,18 +56,12 @@ public class AutoEatAndRod {
 
     //    吃完食钓鱼
     private static void switchBackToRod(MinecraftClient client) {
-        if (!AutoMoveConfig.INSTANCE.fishEnabled) return;
         if (client.player == null) return;
         PlayerInventory inv = client.player.getInventory();
-
-        for (int i = 0; i < 9; i++) {
-            ItemStack stack = inv.getStack(i);
-            if (stack.getItem() instanceof FishingRodItem) {
-                inv.setSelectedSlot(i);
-                break;
-            }
+        if (previousSlot != -1) {
+            inv.setSelectedSlot(previousSlot);
+            previousSlot = -1;
         }
-
         // 停止“右键”
         client.options.useKey.setPressed(false);
     }
