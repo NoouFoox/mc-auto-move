@@ -67,9 +67,14 @@ public class ModMenuApiImpl implements ModMenuApi {
                     () -> AutoMoveConfig.INSTANCE.autoEat,
                     v -> AutoMoveConfig.INSTANCE.autoEat = v
             );
+            addToggleButton(130,
+                    "自动挂机攻击 X-Sword",
+                    () -> AutoMoveConfig.INSTANCE.autoSword,
+                    v -> AutoMoveConfig.INSTANCE.autoSword = v
+            );
             this.addDrawableChild(
                     ButtonWidget.builder(Text.literal("返回"), b -> MinecraftClient.getInstance().setScreen(parent))
-                            .dimensions(60, 150, 80, 20)
+                            .dimensions(60, 160, 80, 20)
                             .build()
             );
         }
