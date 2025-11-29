@@ -28,7 +28,7 @@ public class AutomoveClient implements ClientModInitializer {
                 //         自动挥剑（独立功能）
                 // ================================
                 if (AutoMoveConfig.INSTANCE.autoSword) {
-                    if (tick % 16 == 0) {
+                    if (tick % 20 == 0) {
                         // 必须存在世界和玩家
                         if (client.world == null) return;
                         ItemStack held = client.player.getMainHandStack();
