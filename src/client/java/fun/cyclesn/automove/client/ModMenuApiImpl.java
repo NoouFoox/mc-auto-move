@@ -117,6 +117,15 @@ public class ModMenuApiImpl implements ModMenuApi {
                     }
             );
             this.addDrawableChild(
+                    ButtonWidget.builder(Text.literal("超级高亮:"+(AutoMoveConfig.INSTANCE.showHighLight ? "开启" : "关闭")), b -> {
+                                AutoMoveConfig.INSTANCE.showHighLight = !AutoMoveConfig.INSTANCE.showHighLight;
+                                AutoMoveConfig.INSTANCE.save();
+                                b.setMessage(Text.literal("超级高亮:" + (AutoMoveConfig.INSTANCE.showHighLight ? "开启" : "关闭")));
+                            })
+                            .dimensions(270, 160, 120, 20)
+                            .build()
+            );
+            this.addDrawableChild(
                     ButtonWidget.builder(Text.literal("返回"), b -> MinecraftClient.getInstance().setScreen(parent))
                             .dimensions(60, 190, 80, 20)
                             .build()

@@ -19,6 +19,7 @@ public class AutoMoveConfig {
     public boolean findChamber = false;
     //    高亮宝库
     public boolean highlightTreasure = true;
+    public boolean showHighLight = false;
 
     private AutoMoveConfig() {
     }

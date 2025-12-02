@@ -1,5 +1,6 @@
 package fun.cyclesn.automove.client;
 
+import fun.cyclesn.automove.client.config.AutoMoveConfig;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
@@ -24,9 +25,11 @@ public class BlockHighlighter {
     static {
         WorldRenderEvents.AFTER_ENTITIES.register(BlockHighlighter::onRender);
     }
+
     public static void removeChunk(ChunkPos cp) {
         CHUNK_MAP.remove(cp);
     }
+
     public static void highlight(BlockPos pos) {
         HIGHLIGHTED.add(pos.toImmutable());
         ChunkPos cp = new ChunkPos(pos);
@@ -68,13 +71,22 @@ public class BlockHighlighter {
                 pos.getY() - cam.y,
                 pos.getZ() - cam.z
         );
-
+// 超出框渲染 便于查找
+        if (AutoMoveConfig.INSTANCE.showHighLight) {
+            drawBoxLines(
+                    matrices,
+                    buf,
+                    0, 1, 0,
+                    1, 100, 1,
+                    0f, 1f, 1f, 1f // 青色线框
+            );
+        }
         drawBoxLines(
                 matrices,
                 buf,
                 0, 0, 0,
                 1, 1, 1,
-                0f, 1f, 1f, 1f // 青色线框
+                1f, 0f, 0, 1f // 红线框
         );
 
         matrices.pop();
