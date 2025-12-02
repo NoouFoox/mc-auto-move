@@ -13,8 +13,12 @@ public class AutoMoveConfig {
 
     public boolean enabled = false;
     public boolean jumpEnabled = false;
-    public boolean autoEat = false ;
+    public boolean autoEat = false;
     public boolean autoSword = false;
+    //    寻找试炼大厅
+    public boolean findChamber = false;
+    //    高亮宝库
+    public boolean highlightTreasure = true;
 
     private AutoMoveConfig() {
     }

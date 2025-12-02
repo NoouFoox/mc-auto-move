@@ -5,16 +5,21 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AutomoveClient implements ClientModInitializer {
     private int tick = 0;
+    public static final String MOD_ID = "EazyMCccc";
     private boolean movingLeft = false;
     private boolean movingRight = false;
-
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     @Override
     public void onInitializeClient() {
         try {
+            TrialChamber.init();
             AutoEatAndRod.init();
+            HighlightVault.init();
 
             ClientTickEvents.END_CLIENT_TICK.register(client -> {
                 if (client.player == null) return;

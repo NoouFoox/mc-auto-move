@@ -24,13 +24,18 @@ public class ModMenuApiImpl implements ModMenuApi {
             super(Text.literal("AutoMove 配置"));
             this.parent = parent;
         }
+
+        private String getLabel(String label, Boolean is) {
+            return label + (is ? "：开启" : "：关闭");
+        }
+
         private void addToggleButton(
                 int y,
                 String label,
                 BooleanSupplier getter,
                 Consumer<Boolean> setter
         ) {
-            String text = label + (getter.getAsBoolean() ? "：开启" : "：关闭");
+            String text = getLabel(label, getter.getAsBoolean());
 
             this.addDrawableChild(
                     ButtonWidget.builder(Text.literal(text), button -> {
@@ -40,6 +45,28 @@ public class ModMenuApiImpl implements ModMenuApi {
                                 button.setMessage(Text.literal(label + (newVal ? "：开启" : "：关闭")));
                             })
                             .dimensions(60, y, 200, 20)
+                            .build()
+            );
+        }
+
+        private void addToggleButton(
+                int y,
+                int x,
+                int width,
+                String label,
+                BooleanSupplier getter,
+                Consumer<Boolean> setter
+        ) {
+            String text = getLabel(label, getter.getAsBoolean());
+
+            this.addDrawableChild(
+                    ButtonWidget.builder(Text.literal(text), button -> {
+                                boolean newVal = !getter.getAsBoolean();
+                                setter.accept(newVal);
+                                AutoMoveConfig.INSTANCE.save();
+                                button.setMessage(Text.literal(label + (newVal ? "：开启" : "：关闭")));
+                            })
+                            .dimensions(x, y, width, 20)
                             .build()
             );
         }
@@ -67,9 +94,31 @@ public class ModMenuApiImpl implements ModMenuApi {
                     () -> AutoMoveConfig.INSTANCE.autoSword,
                     v -> AutoMoveConfig.INSTANCE.autoSword = v
             );
+            addToggleButton(130,
+                    "寻找试炼大厅",
+                    () -> AutoMoveConfig.INSTANCE.findChamber,
+                    v -> AutoMoveConfig.INSTANCE.findChamber = v
+            );
+            this.addDrawableChild(
+                    ButtonWidget.builder(Text.literal("清空试炼hash"), b -> {
+                                TrialChamber.resetNotifiedChambers();
+                            })
+                            .dimensions(270, 130, 80, 20)
+                            .build()
+            );
+            addToggleButton(160,
+                    "高亮宝库",
+                    () -> AutoMoveConfig.INSTANCE.highlightTreasure,
+                    v -> {
+                        AutoMoveConfig.INSTANCE.highlightTreasure = v;
+                        if (!v) {
+                            BlockHighlighter.clear();
+                        }
+                    }
+            );
             this.addDrawableChild(
                     ButtonWidget.builder(Text.literal("返回"), b -> MinecraftClient.getInstance().setScreen(parent))
-                            .dimensions(60, 130, 80, 20)
+                            .dimensions(60, 190, 80, 20)
                             .build()
             );
         }
