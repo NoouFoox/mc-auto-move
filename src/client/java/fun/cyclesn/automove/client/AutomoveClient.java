@@ -20,6 +20,7 @@ public class AutomoveClient implements ClientModInitializer {
             TrialChamber.init();
             AutoEatAndRod.init();
             HighlightVault.init();
+            Records.init();
 
             ClientTickEvents.END_CLIENT_TICK.register(client -> {
                 if (client.player == null) return;

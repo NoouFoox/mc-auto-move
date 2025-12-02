@@ -1,6 +1,7 @@
 package fun.cyclesn.automove.client;
 
 import fun.cyclesn.automove.client.config.AutoMoveConfig;
+import fun.cyclesn.automove.client.tool.VaultRecordManager;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -41,7 +42,9 @@ public class HighlightVault {
                     BlockState state = chunk.getBlockState(pos);
                     String blockName = state.getBlock().getName().toString();
                     if (blockName.contains("vault")) {
-                        BlockHighlighter.highlight(pos);
+                        if (!VaultRecordManager.isOpened(pos)) {
+                            BlockHighlighter.highlight(pos);
+                        }
                     }
                 }
             }
