@@ -11,7 +11,7 @@
   "environment": "client",
   "entrypoints": {
     "modmenu": [
-      "fun.cyclesn.automove.client.ModMenuApiImpl"
+      "fun.cyclesn.automove.client.ModMenuApiImplNew"
     ],
     "fabric-datagen": [
       "fun.cyclesn.automove.client.AutomoveDataGenerator"
