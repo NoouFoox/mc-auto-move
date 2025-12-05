@@ -4,13 +4,11 @@ import fun.cyclesn.automove.client.commands.AiCommand;
 import fun.cyclesn.automove.client.config.AutoMoveConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
 
 public class AutomoveClient implements ClientModInitializer {
     private int tick = 0;
