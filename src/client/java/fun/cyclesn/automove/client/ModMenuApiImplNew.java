@@ -4,6 +4,7 @@ package fun.cyclesn.automove.client;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import fun.cyclesn.automove.client.config.AutoMoveConfig;
+import fun.cyclesn.automove.client.entity.EntityHighlighter;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -58,6 +59,30 @@ public class ModMenuApiImplNew implements ModMenuApi {
                 .setSaveConsumer(newValue -> AutoMoveConfig.INSTANCE.showHighLight = newValue)
                 .setTooltip(Text.literal("开启后会有一个长度为100格的大柱子显示在宝库上放"))
                 .build());
+        general.addEntry(entryBuilder.startBooleanToggle(Text.literal("开启寻找实体"), AutoMoveConfig.INSTANCE.findEntity)
+                .setSaveConsumer(newValue -> {
+                    if (!newValue) {
+                        EntityHighlighter.clear();
+                    }
+                    AutoMoveConfig.INSTANCE.findEntity = newValue;
+                })
+                .build());
+        general.addEntry(entryBuilder.startTextField(Text.literal("实体名称"), AutoMoveConfig.INSTANCE.findEntityName)
+                .setDefaultValue("")
+                .setTooltip(Text.literal("英文逗号分割，*匹配全部"))
+                .setSaveConsumer(newValue -> {
+                    EntityHighlighter.clear();
+                    AutoMoveConfig.INSTANCE.findEntityName = newValue;
+                })
+                .build());
+        general.addEntry(entryBuilder.startIntField(Text.literal("实体查找强度"), AutoMoveConfig.INSTANCE.findStrength)
+                .setDefaultValue(1)
+                .setMax(1024)
+                .setSaveConsumer(newValue -> {
+                    EntityHighlighter.clear();
+                    AutoMoveConfig.INSTANCE.findStrength = newValue;
+                })
+                .build());
         general.addEntry(entryBuilder.startTextField(Text.literal("API Key"), AutoMoveConfig.INSTANCE.apiKey)
                 .setDefaultValue("")
                 .setSaveConsumer(newValue -> AutoMoveConfig.INSTANCE.apiKey = newValue)
@@ -71,6 +96,7 @@ public class ModMenuApiImplNew implements ModMenuApi {
                 .setSaveConsumer(newValue -> AutoMoveConfig.INSTANCE.model = newValue)
                 .build());
         general.addEntry(entryBuilder.startIntField(Text.literal("AI 历史记录条数"), AutoMoveConfig.INSTANCE.AI_MAX_HISTORY)
+                .setMax(512)
                 .setDefaultValue(6)
                 .setSaveConsumer(newValue -> AutoMoveConfig.INSTANCE.AI_MAX_HISTORY = newValue)
                 .build());

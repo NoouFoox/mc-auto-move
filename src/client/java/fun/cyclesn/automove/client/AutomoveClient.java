@@ -2,8 +2,11 @@ package fun.cyclesn.automove.client;
 
 import fun.cyclesn.automove.client.commands.AiCommand;
 import fun.cyclesn.automove.client.config.AutoMoveConfig;
+import fun.cyclesn.automove.client.entity.EntityHighlighter;
+import fun.cyclesn.automove.client.entity.FindEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import org.slf4j.Logger;
@@ -27,6 +30,7 @@ public class AutomoveClient implements ClientModInitializer {
             AutoMoveConfig.INSTANCE = config;
             AutoMoveConfig.INSTANCE.save();
             AiCommand.register();
+            FindEntity.init();
             ClientTickEvents.END_CLIENT_TICK.register(client -> {
                 if (client.player == null) return;
 
@@ -84,7 +88,7 @@ public class AutomoveClient implements ClientModInitializer {
             });
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("初始化失败", e);
         }
     }
 
