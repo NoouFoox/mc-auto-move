@@ -50,8 +50,10 @@ public class AiService {
             try {
                 JsonArray messages = getJsonElements(question, systemPrompt);
 
+                // 保存到历史
                 chatHistory.add(new ChatCompletionMessage("user", question));
 
+                // 请求 body
                 JsonObject requestBody = new JsonObject();
                 requestBody.addProperty("model", config.model);
                 requestBody.add("messages", messages);
@@ -88,20 +90,21 @@ public class AiService {
     private static @NotNull JsonArray getJsonElements(String question, String systemPrompt) {
         JsonArray messages = new JsonArray();
 
+        // 系统消息
         JsonObject systemMsg = new JsonObject();
         systemMsg.addProperty("role", "system");
         systemMsg.addProperty("content", systemPrompt);
         messages.add(systemMsg);
 
-        // 加上历史消息
-        for (ChatCompletionMessage msg : chatHistory.getMessagesAsList()) {
+        // 历史消息
+        for (ChatCompletionMessage msg : chatHistory.getMessages()) {
             JsonObject obj = new JsonObject();
             obj.addProperty("role", msg.getRole());
             obj.addProperty("content", msg.getContent());
             messages.add(obj);
         }
 
-        // 添加用户当前消息
+        // 用户当前消息
         JsonObject userMsg = new JsonObject();
         userMsg.addProperty("role", "user");
         userMsg.addProperty("content", question);
@@ -117,14 +120,31 @@ public class AiService {
     public static class ChatCompletionMessage {
         private final String role;
         private final String content;
-        public ChatCompletionMessage(String role, String content) { this.role = role; this.content = content; }
+        public ChatCompletionMessage(String role, String content) {
+            this.role = role;
+            this.content = content;
+        }
         public String getRole() { return role; }
         public String getContent() { return content; }
     }
 
     public static class ChatHistory {
-        private final List<ChatCompletionMessage> history = new LinkedList<>();
-        public void add(ChatCompletionMessage msg) { history.add(msg); }
-        public List<ChatCompletionMessage> getMessagesAsList() { return history; }
+        private static final int MAX_HISTORY = AutoMoveConfig.INSTANCE.AI_MAX_HISTORY;
+        private final LinkedList<ChatCompletionMessage> messages = new LinkedList<>();
+
+        public void add(ChatCompletionMessage msg) {
+            messages.add(msg);
+            if (messages.size() > MAX_HISTORY) {
+                messages.removeFirst();
+            }
+        }
+
+        public List<ChatCompletionMessage> getMessages() {
+            return new LinkedList<>(messages);
+        }
+
+        public void clear() {
+            messages.clear();
+        }
     }
 }

@@ -12,7 +12,11 @@ public class FindEntity {
             if (client.world == null
                     || !AutoMoveConfig.INSTANCE.findEntity
                     || AutoMoveConfig.INSTANCE.findEntityName.isEmpty()) return;
+
             String[] names = AutoMoveConfig.INSTANCE.findEntityName.split("\\s*,\\s*");
+
+            // 每次 tick 清理高亮，重新添加
+            EntityHighlighter.clear();
 
             for (Entity entity : client.world.getEntities()) {
                 if ("*".equals(AutoMoveConfig.INSTANCE.findEntityName)) {
