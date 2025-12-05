@@ -11,6 +11,8 @@ import net.minecraft.text.Text;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import net.minecraft.client.gui.widget.TextFieldWidget;
+
 public class ModMenuApiImpl implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
@@ -49,27 +51,9 @@ public class ModMenuApiImpl implements ModMenuApi {
             );
         }
 
-        private void addToggleButton(
-                int y,
-                int x,
-                int width,
-                String label,
-                BooleanSupplier getter,
-                Consumer<Boolean> setter
-        ) {
-            String text = getLabel(label, getter.getAsBoolean());
-
-            this.addDrawableChild(
-                    ButtonWidget.builder(Text.literal(text), button -> {
-                                boolean newVal = !getter.getAsBoolean();
-                                setter.accept(newVal);
-                                AutoMoveConfig.INSTANCE.save();
-                                button.setMessage(Text.literal(label + (newVal ? "：开启" : "：关闭")));
-                            })
-                            .dimensions(x, y, width, 20)
-                            .build()
-            );
-        }
+        private TextFieldWidget modelField;
+        private TextFieldWidget apiUrlField;
+        private TextFieldWidget apiKeyField;
 
         @Override
         protected void init() {
@@ -117,7 +101,7 @@ public class ModMenuApiImpl implements ModMenuApi {
                     }
             );
             this.addDrawableChild(
-                    ButtonWidget.builder(Text.literal("超级高亮:"+(AutoMoveConfig.INSTANCE.showHighLight ? "开启" : "关闭")), b -> {
+                    ButtonWidget.builder(Text.literal("超级高亮:" + (AutoMoveConfig.INSTANCE.showHighLight ? "开启" : "关闭")), b -> {
                                 AutoMoveConfig.INSTANCE.showHighLight = !AutoMoveConfig.INSTANCE.showHighLight;
                                 AutoMoveConfig.INSTANCE.save();
                                 b.setMessage(Text.literal("超级高亮:" + (AutoMoveConfig.INSTANCE.showHighLight ? "开启" : "关闭")));
@@ -125,16 +109,72 @@ public class ModMenuApiImpl implements ModMenuApi {
                             .dimensions(270, 160, 120, 20)
                             .build()
             );
+
+            apiKeyField = new TextFieldWidget(
+                    this.textRenderer,
+                    60,
+                    190,
+                    300,
+                    20,
+                    Text.literal("API Key 输入框")
+            );
+            apiKeyField.setMaxLength(255);
+            apiKeyField.setText(AutoMoveConfig.INSTANCE.apiKey);
+            this.addDrawableChild(apiKeyField);
+            this.addDrawableChild(ButtonWidget.builder(Text.literal("API Key:"), button -> {
+            }).dimensions(5, 190, 50, 20).build());
+            apiUrlField = new TextFieldWidget(
+                    this.textRenderer,
+                    60,
+                    220,
+                    300,
+                    20,
+                    Text.literal("API URL 输入框")
+            );
+            apiUrlField.setMaxLength(255);
+            apiUrlField.setText(AutoMoveConfig.INSTANCE.apiUrl);
+            this.addDrawableChild(apiUrlField);
+            this.addDrawableChild(ButtonWidget.builder(Text.literal("API URL:"), button -> {
+            }).dimensions(5, 220, 50, 20).build());
+            modelField = new TextFieldWidget(
+                    this.textRenderer,
+                    60,
+                    250,
+                    300,
+                    20,
+                    Text.literal("模型选择")
+            );
+            modelField.setMaxLength(255);
+            modelField.setText(AutoMoveConfig.INSTANCE.model);
+            this.addDrawableChild(modelField);
+            this.addDrawableChild(ButtonWidget.builder(Text.literal("模型:"), button -> {
+            }).dimensions(5, 250, 50, 20).build());
+
             this.addDrawableChild(
                     ButtonWidget.builder(Text.literal("返回"), b -> MinecraftClient.getInstance().setScreen(parent))
-                            .dimensions(60, 190, 80, 20)
+                            .dimensions(60, 180, 80, 20)
                             .build()
             );
+            this.addDrawableChild(ButtonWidget.builder(Text.literal("保存文本配置"), b -> {
+                                saveTextConfig();
+                            })
+                            .dimensions(300, 180, 80, 20)
+                            .build()
+            );
+        }
+
+
+        private void saveTextConfig() {
+            AutoMoveConfig.INSTANCE.apiKey = apiKeyField.getText();
+            AutoMoveConfig.INSTANCE.apiUrl = apiUrlField.getText();
+            AutoMoveConfig.INSTANCE.model = modelField.getText();
+            AutoMoveConfig.INSTANCE.save();
         }
 
         @Override
         public void close() {
             if (client != null) {
+                saveTextConfig();
                 client.setScreen(parent);
             }
         }
