@@ -50,7 +50,6 @@ dependencies {
     modApi("me.shedaniel.cloth:cloth-config-fabric:19.0.147") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    modImplementation 'com.openai:openai-java:4.9.0'
 }
 
 processResources {
