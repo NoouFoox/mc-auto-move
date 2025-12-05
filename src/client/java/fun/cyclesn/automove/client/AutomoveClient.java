@@ -1,7 +1,9 @@
 package fun.cyclesn.automove.client;
 
+import fun.cyclesn.automove.client.commands.AiCommand;
 import fun.cyclesn.automove.client.config.AutoMoveConfig;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -20,7 +22,7 @@ public class AutomoveClient implements ClientModInitializer {
             TrialChamber.init();
             AutoEatAndRod.init();
             HighlightVault.init();
-
+            AutoMoveConfig.INSTANCE = AutoMoveConfig.load();
             ClientTickEvents.END_CLIENT_TICK.register(client -> {
                 if (client.player == null) return;
 

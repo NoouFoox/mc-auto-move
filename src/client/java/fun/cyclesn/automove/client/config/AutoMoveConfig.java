@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import static fun.cyclesn.automove.client.AutomoveClient.LOGGER;
+
 public class AutoMoveConfig {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final File FILE = new File("config/automove.json");
@@ -20,13 +22,16 @@ public class AutoMoveConfig {
     //    高亮宝库
     public boolean highlightTreasure = true;
     public boolean showHighLight = false;
+    public String apiKey = ""; // 默认值为空字符串
+    public String apiUrl = "https://api.example.com/";
+    public String model = "deepseek-chat";
 
     private AutoMoveConfig() {
     }
 
-    public static AutoMoveConfig INSTANCE = new AutoMoveConfig();
+    public static AutoMoveConfig INSTANCE;
 
-    private static AutoMoveConfig load() {
+    public static AutoMoveConfig load() {
         try {
             if (FILE.exists()) {
                 return gson.fromJson(new FileReader(FILE), AutoMoveConfig.class);
@@ -39,8 +44,12 @@ public class AutoMoveConfig {
     public void save() {
         try {
             FILE.getParentFile().mkdirs();
-            gson.toJson(this, new FileWriter(FILE));
-        } catch (Exception ignored) {
+            try (FileWriter writer = new FileWriter(FILE)) {
+                gson.toJson(this, writer);
+            }
+            LOGGER.info("保存配置文件成功");
+        } catch (Exception e) {
+            LOGGER.error("保存配置文件失败{}", e.getMessage());
         }
     }
 }
