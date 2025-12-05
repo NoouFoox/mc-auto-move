@@ -4,10 +4,13 @@ import fun.cyclesn.automove.client.commands.AiCommand;
 import fun.cyclesn.automove.client.config.AutoMoveConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 public class AutomoveClient implements ClientModInitializer {
     private int tick = 0;
@@ -15,13 +18,16 @@ public class AutomoveClient implements ClientModInitializer {
     private boolean movingLeft = false;
     private boolean movingRight = false;
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    private AutoMoveConfig config = AutoMoveConfig.load();
+
     @Override
     public void onInitializeClient() {
         try {
             TrialChamber.init();
             AutoEatAndRod.init();
             HighlightVault.init();
-            AutoMoveConfig.INSTANCE = AutoMoveConfig.load();
+            AutoMoveConfig.INSTANCE = config;
+            AutoMoveConfig.INSTANCE.save();
             AiCommand.register();
             ClientTickEvents.END_CLIENT_TICK.register(client -> {
                 if (client.player == null) return;

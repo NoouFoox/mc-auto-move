@@ -47,7 +47,12 @@ public class ModMenuApiImplNew implements ModMenuApi {
 //                .build());
         // 高亮宝库 (highlightTreasure)
         general.addEntry(entryBuilder.startBooleanToggle(Text.literal("高亮宝库"), AutoMoveConfig.INSTANCE.highlightTreasure)
-                .setSaveConsumer(newValue -> AutoMoveConfig.INSTANCE.highlightTreasure = newValue)
+                .setSaveConsumer(newValue -> {
+                    AutoMoveConfig.INSTANCE.highlightTreasure = newValue;
+                    if (!newValue) {
+                        BlockHighlighter.clear();
+                    }
+                })
                 .build());
         general.addEntry(entryBuilder.startBooleanToggle(Text.literal("宝库超级高亮"), AutoMoveConfig.INSTANCE.showHighLight)
                 .setSaveConsumer(newValue -> AutoMoveConfig.INSTANCE.showHighLight = newValue)
