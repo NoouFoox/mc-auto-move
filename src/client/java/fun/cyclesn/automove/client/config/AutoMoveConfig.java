@@ -23,8 +23,9 @@ public class AutoMoveConfig {
     public boolean highlightTreasure = true;
     public boolean showHighLight = false;
     public String apiKey = ""; // 默认值为空字符串
-    public String apiUrl = "https://api.example.com/";
+    public String apiUrl = "https://api.deepseek.com/chat/completions";
     public String model = "deepseek-chat";
+    public int AI_MAX_HISTORY = 6;
 
     private AutoMoveConfig() {
     }
