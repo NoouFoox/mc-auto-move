@@ -86,6 +86,7 @@ public class AiService {
                         .getAsString();
 
                 send(source, "§c[问题]§f " + question);
+                chatHistory.add(new ChatCompletionMessage("assistant", answer));
                 send(source, "§a[" + config.model + " 回答]§f \n" + answer);
                 LOGGER.info(answer);
 
@@ -145,11 +146,11 @@ public class AiService {
     }
 
     public static class ChatHistory {
-        private static final int MAX_HISTORY = AutoMoveConfig.INSTANCE.AI_MAX_HISTORY;
         private final LinkedList<ChatCompletionMessage> messages = new LinkedList<>();
 
         public void add(ChatCompletionMessage msg) {
             messages.add(msg);
+            int MAX_HISTORY = AutoMoveConfig.INSTANCE.AI_MAX_HISTORY;
             if (messages.size() > MAX_HISTORY) {
                 messages.removeFirst();
             }
