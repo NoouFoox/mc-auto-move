@@ -2,28 +2,41 @@ package fun.cyclesn.automove.client;
 
 import fun.cyclesn.automove.client.commands.AiCommand;
 import fun.cyclesn.automove.client.config.AutoMoveConfig;
-import fun.cyclesn.automove.client.entity.EntityHighlighter;
 import fun.cyclesn.automove.client.entity.FindEntity;
+import fun.cyclesn.automove.client.rag.LocalKnowledgeBase;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 
 public class AutomoveClient implements ClientModInitializer {
     private int tick = 0;
     public static final String MOD_ID = "EazyMCccc";
+    public static final String kbFile = "./config/knowledge.csv";
+    public static LocalKnowledgeBase kb;
     private boolean movingLeft = false;
     private boolean movingRight = false;
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    private AutoMoveConfig config = AutoMoveConfig.load();
+    private final AutoMoveConfig config = AutoMoveConfig.load();
+
+    public AutomoveClient() throws IOException {
+    }
 
     @Override
     public void onInitializeClient() {
         try {
+            try {
+                kb = new LocalKnowledgeBase(kbFile);
+                kb.load();
+                LOGGER.info("LocalKnowledgeBase 初始化成功: {}", kbFile);
+            } catch (IOException e) {
+                LOGGER.error("LocalKnowledgeBase 初始化失败", e);
+            }
             TrialChamber.init();
             AutoEatAndRod.init();
             HighlightVault.init();

@@ -26,11 +26,15 @@ public class AutoMoveConfig {
     public String apiUrl = "https://api.deepseek.com/";
     public String model = "deepseek-chat";
     public int AI_MAX_HISTORY = 6;
-//    是否开启寻找实体
+    //    是否开启寻找实体
     public boolean findEntity = false;
-//    实体寻找力度
+    //    实体寻找力度
     public int findStrength = 10;
     public String findEntityName = "";
+//    嵌入模型
+    public String EmbeddingUrl = "";
+    public String EmbeddingKey = "";
+    public String EmbeddingModel = "BAAI/bge-m3";
 
     private AutoMoveConfig() {
     }

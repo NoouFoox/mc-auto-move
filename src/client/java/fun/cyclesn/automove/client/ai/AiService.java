@@ -2,11 +2,14 @@ package fun.cyclesn.automove.client.ai;
 
 import com.google.gson.*;
 import fun.cyclesn.automove.client.config.AutoMoveConfig;
+import fun.cyclesn.automove.client.rag.EmbeddingClient;
+import fun.cyclesn.automove.client.rag.LocalKnowledgeBase;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -16,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static fun.cyclesn.automove.client.AutomoveClient.LOGGER;
+import static fun.cyclesn.automove.client.AutomoveClient.kb;
 
 public class AiService {
     private static final ChatHistory chatHistory = new ChatHistory();
@@ -32,24 +36,29 @@ public class AiService {
                     config.apiKey, config.model, config.apiUrl);
             return;
         }
-
-        String systemPrompt =
-                "你是 Minecraft " + mcVersion + " 版本的专家。" +
-                        "回答必须简短、自然、像玩家聊天一样，不要机械罗列。" +
-                        "不要复述历史消息，不要总结，不要解释你的行为。" +
-                        "当回答涉及以下内容时自动着色：" +
-                        "\n物品名 → §e金色" +
-                        "\n方块名 → §a绿色" +
-                        "\n生物名 → §b蓝色" +
-                        "\n重要动作（掉落、生成、使用、合成）→ §d紫色" +
-                        "\n数字、层数、概率 → §c红色" +
-                        "\n输出要自然、口语化，但保持信息准确。" +
-                        "\n只输出简短答案。";
-
         new Thread(() -> {
             try {
+                float[] queryEmbedding = EmbeddingClient.getEmbeddingSync(question);
+                LOGGER.info("queryEmbedding: {}", queryEmbedding.length);
+                LocalKnowledgeBase.Entry kbEntry = kb.search(queryEmbedding);
+                String systemPrompt =
+                        "你是 Minecraft " + mcVersion +
+                                " 版本的专家。回答要自然、简洁、贴近玩家语言，只基于该版本事实。" +
+                                "禁止重复前一条消息，不要总结，不要啰嗦，只根据玩家问题给一个直接且有温度的回答。" +
+                                "当回答涉及以下内容时自动着色：" +
+                                "\n物品名 → §e金色" +
+                                "\n方块名 → §a绿色" +
+                                "\n生物名 → §b蓝色" +
+                                "\n重要动作（掉落、生成、使用、合成）→ §d紫色" +
+                                "\n数字、层数、概率 → §c红色" +
+                                "\n输出要自然、口语化，但保持信息准确。" +
+                                "\n只输出简短答案。";
+                if (kbEntry != null) {
+                    systemPrompt += "\n参考知识库内容: " + kbEntry.text;
+                    LOGGER.info(kbEntry.text);
+                }
+                LOGGER.info(systemPrompt);
                 JsonArray messages = getJsonElements(question, systemPrompt);
-
                 // 保存到历史
                 chatHistory.add(new ChatCompletionMessage("user", question));
 
@@ -112,7 +121,7 @@ public class AiService {
         return messages;
     }
 
-    private static void send(FabricClientCommandSource src, String msg) {
+    public static void send(FabricClientCommandSource src, String msg) {
         MinecraftClient.getInstance().execute(() -> src.sendFeedback(Text.literal(msg)));
     }
 
@@ -120,12 +129,19 @@ public class AiService {
     public static class ChatCompletionMessage {
         private final String role;
         private final String content;
+
         public ChatCompletionMessage(String role, String content) {
             this.role = role;
             this.content = content;
         }
-        public String getRole() { return role; }
-        public String getContent() { return content; }
+
+        public String getRole() {
+            return role;
+        }
+
+        public String getContent() {
+            return content;
+        }
     }
 
     public static class ChatHistory {
